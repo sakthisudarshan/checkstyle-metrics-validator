@@ -27,6 +27,14 @@ jobs:
           chmod +x mvnw
           ./mvnw -B test
 
+      - name: Maven verify with Checkstyle plugin
+        run: ./mvnw -B clean verify
+
+      - name: Verify Checkstyle output exists
+        run: |
+          test -f target/checkstyle/checkstyle-result.xml
+          test -d target/checkstyle
+
       - name: Export platform gate JSON
         run: ./mvnw -B exec:java@export-platform
 
