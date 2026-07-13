@@ -1,5 +1,10 @@
 target/
 reports/
+
+# Platform export (keep golden platform file only)
+checkstyle/0/*
+!checkstyle/0/checkstyle.json
+
 .idea/
 *.iml
 .classpath

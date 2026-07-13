@@ -1,7 +1,8 @@
 {
   "exit" : 0,
   "scan_ok" : true,
-  "report_path" : "src/main/java/com/testable/demo/CleanDemo.java",
+  "report_path" : "target/checkstyle-result.xml",
+  "checkstyle_path" : "target/checkstyle-result.xml",
   "platform_file" : "checkstyle/0/checkstyle.json",
   "total_violations" : 0,
   "totalViolations" : 0,

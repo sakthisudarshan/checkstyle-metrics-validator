@@ -52,13 +52,20 @@ The TESTABLE platform discovers tools via the gate file at:
 checkstyle/0/checkstyle.json
 ```
 
-This file must exist with `"tool": "checkstyle"` for Checkstyle to appear in the tool list and trigger execution.
+This file must exist with `"tool": "checkstyle"` and `"report_path": "target/checkstyle-result.xml"` for Checkstyle to appear in the tool list and trigger execution.
 
-### Export platform gate
+See `docs/TESTING_TEAM_GUIDE.md` for the full validation checklist.
+
+### One-command pipeline
+
+```powershell
+.\scripts\run_checkstyle.ps1
+```
+
+### Export platform gate manually
 
 ```bash
-.\mvnw.cmd exec:java@export-platform
-.\mvnw.cmd exec:java@validate-gate
+.\mvnw.cmd clean verify -Ptestable-pipeline
 ```
 
 S3 upload path: `s3://<bucket>/checkstyle/0/checkstyle.json`

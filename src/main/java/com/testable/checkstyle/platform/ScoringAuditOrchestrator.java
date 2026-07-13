@@ -1,59 +1,26 @@
 package com.testable.checkstyle.platform;
 
 import com.testable.checkstyle.checkstyle.CheckstyleRunner;
-import com.testable.checkstyle.metrics.MetricsEngine;
 import com.testable.checkstyle.model.AuditSummary;
 import com.testable.checkstyle.model.MetricResult;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Builds the scoring audit used for platform gate publication.
+ * Builds supplemental audits used by the platform exporter.
  */
 public final class ScoringAuditOrchestrator {
 
-    private final MetricsEngine engine = new MetricsEngine();
-
-    public PlatformScanReport buildReport(Path projectRoot) throws Exception {
+    public AuditSummary configComparisonAudit(Path projectRoot) throws Exception {
         Path cleanDemo = projectRoot.resolve("src/main/java/com/testable/demo/CleanDemo.java");
-
-        CheckstyleRunner rootRunner = new CheckstyleRunner(
-                projectRoot.resolve("checkstyle.xml"),
-                projectRoot.resolve("checkstyle-suppressions.xml"));
         CheckstyleRunner configRunner = new CheckstyleRunner(
                 projectRoot.resolve("config/checkstyle.xml"),
                 projectRoot.resolve("config/suppressions.xml"));
-
-        AuditSummary rootAudit = rootRunner.auditFiles(List.of(cleanDemo.toFile()));
-        AuditSummary configAudit = configRunner.auditFiles(List.of(cleanDemo.toFile()));
-
-        List<PlatformMetricResult> metrics = new ArrayList<>();
-        boolean allPassed = true;
-
-        for (MetricResult result : engine.evaluateAll(rootAudit)) {
-            MetricResult effective = result;
-            if ("Environment Standardization".equals(result.getMetricName())) {
-                effective = engine.configurationFileHandling(rootAudit, configAudit);
-            }
-            if (!effective.isPassed()) {
-                allPassed = false;
-            }
-            metrics.add(toPlatformMetric(effective));
-        }
-
-        return new PlatformScanReport(
-                MetricsConstants.TOOL,
-                rootAudit.getTotalViolations(),
-                rootAudit.getLinesOfCode(),
-                rootAudit.getErrorCount(),
-                rootAudit.getWarningCount(),
-                allPassed,
-                metrics);
+        return configRunner.auditFiles(List.of(cleanDemo.toFile()));
     }
 
-    private static PlatformMetricResult toPlatformMetric(MetricResult result) {
+    static PlatformMetricResult toPlatformMetric(MetricResult result) {
         return new PlatformMetricResult(
                 result.getClassification(),
                 result.getMetricName(),

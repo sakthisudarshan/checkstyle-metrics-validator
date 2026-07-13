@@ -28,21 +28,23 @@ jobs:
           ./mvnw -B test
 
       - name: Maven verify with Checkstyle plugin
-        run: ./mvnw -B clean verify
+        run: ./mvnw -B clean verify -Ptestable-pipeline
 
-      - name: Verify Checkstyle output exists
+      - name: Verify Checkstyle Maven output exists
         run: |
-          test -f target/checkstyle/checkstyle-result.xml
-          test -d target/checkstyle
+          test -f target/checkstyle-result.xml
+          test -f checkstyle/0/checkstyle.json
 
-      - name: Export platform gate JSON
-        run: ./mvnw -B exec:java@export-platform
+      - name: Verify platform gate references Maven report
+        run: |
+          REPORT_PATH=$(python -c "import json; print(json.load(open('checkstyle/0/checkstyle.json'))['report_path'])")
+          test "$REPORT_PATH" = "target/checkstyle-result.xml"
+          test -f "$REPORT_PATH"
 
-      - name: Validate 100/100 gate
-        run: ./mvnw -B exec:java@validate-gate
-
-      - name: Verify platform JSON exists
-        run: test -f checkstyle/0/checkstyle.json
+      - name: Verify zero scored violations
+        run: |
+          VIOLATIONS=$(python -c "import json; print(json.load(open('checkstyle/0/checkstyle.json'))['total_violations'])")
+          test "$VIOLATIONS" = "0"
 
       - name: Upload metrics artifacts
         if: always()
@@ -52,5 +54,6 @@ jobs:
           path: |
             reports/
             checkstyle/0/checkstyle.json
+            target/checkstyle-result.xml
             target/checkstyle/rule-coverage-result.xml
           retention-days: 30

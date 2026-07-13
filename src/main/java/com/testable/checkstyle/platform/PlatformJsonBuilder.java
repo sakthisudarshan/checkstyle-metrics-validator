@@ -35,6 +35,7 @@ public final class PlatformJsonBuilder {
         platform.put("exit", report.allGatesPassed() ? 0 : 1);
         platform.put("scan_ok", true);
         platform.put("report_path", reportPath);
+        platform.put("checkstyle_path", reportPath);
         platform.put("platform_file", MetricsConstants.PLATFORM_RELATIVE_PATH);
         platform.put("total_violations", report.totalViolations());
         platform.put("totalViolations", report.totalViolations());

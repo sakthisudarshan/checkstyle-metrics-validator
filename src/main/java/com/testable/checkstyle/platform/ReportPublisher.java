@@ -25,6 +25,8 @@ public final class ReportPublisher {
         Files.createDirectories(reportsDir);
         MAPPER.writerWithDefaultPrettyPrinter().writeValue(
                 reportsDir.resolve("metrics-report.json").toFile(), platformReport);
+        MAPPER.writerWithDefaultPrettyPrinter().writeValue(
+                reportsDir.resolve("lint-gate.json").toFile(), platformReport);
         Files.writeString(reportsDir.resolve("metrics-report.md"), renderReport(report, platformReport));
     }
 
@@ -36,6 +38,8 @@ public final class ReportPublisher {
         builder.append("| Violations | ").append(report.totalViolations()).append(" |\n");
         builder.append("| LOC | ").append(report.linesOfCode()).append(" |\n");
         builder.append("| Overall Score | ").append(platform.path("overall_score").asInt()).append("/100 |\n");
+        builder.append("| Report Path | `").append(platform.path("report_path").asText()).append("` |\n");
+        builder.append("| Platform File | `").append(MetricsConstants.PLATFORM_RELATIVE_PATH).append("` |\n");
         builder.append("| Generated | ").append(Instant.now()).append(" |\n\n");
         builder.append("| Technique | Metric | Score | Result |\n|---|---|---:|---|\n");
         for (PlatformMetricResult metric : report.metrics()) {

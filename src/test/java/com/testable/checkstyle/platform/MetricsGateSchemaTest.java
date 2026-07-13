@@ -39,10 +39,20 @@ class MetricsGateSchemaTest {
     }
 
     @Test
+    void goldenFixtureReferencesMavenReport() throws Exception {
+        Path fixture = Path.of("src/test/resources/fixtures/platform_checkstyle_golden.json");
+        JsonNode data = MAPPER.readTree(fixture.toFile());
+        assertEquals("target/checkstyle-result.xml", data.path("report_path").asText());
+        assertEquals("target/checkstyle-result.xml", data.path("checkstyle_path").asText());
+    }
+
+    @Test
     void platformFileExistsAfterExport() throws Exception {
         Path platformFile = Path.of(MetricsConstants.PLATFORM_RELATIVE_PATH);
-        assertTrue(platformFile.toFile().exists(), "Run mvnw exec:java@export-platform first");
+        assertTrue(platformFile.toFile().exists(), "Run mvnw clean verify first");
         assertEquals("checkstyle", MAPPER.readTree(platformFile.toFile()).path("tool").asText());
+        assertEquals("target/checkstyle-result.xml",
+                MAPPER.readTree(platformFile.toFile()).path("report_path").asText());
     }
 
     @Test
