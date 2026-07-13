@@ -30,6 +30,28 @@
         <!-- Unused Variable Detection -->
         <module name="UnusedLocalVariable"/>
 
+        <!-- Javadoc -->
+        <module name="MissingJavadocMethod">
+            <property name="minLineCount" value="0"/>
+        </module>
+        <module name="MissingJavadocType"/>
+
+        <!-- Magic numbers -->
+        <module name="MagicNumber">
+            <property name="ignoreNumbers" value="-1,0,1,2"/>
+        </module>
+
+        <!-- Empty blocks -->
+        <module name="EmptyBlock"/>
+        <module name="EmptyCatchBlock"/>
+
+        <!-- Import order -->
+        <module name="ImportOrder">
+            <property name="groups" value="/^java\./,javax,org,com"/>
+            <property name="ordered" value="true"/>
+            <property name="separated" value="true"/>
+        </module>
+
         <!-- Code Style Rule Validation -->
         <module name="Indentation">
             <property name="basicOffset" value="4"/>

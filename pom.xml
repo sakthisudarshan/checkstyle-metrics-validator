@@ -69,7 +69,18 @@
                 <version>3.5.0</version>
                 <executions>
                     <execution>
+                        <id>rule-coverage</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>com.testable.checkstyle.platform.RuleCoverageExporter</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>export-platform</id>
+                        <phase>verify</phase>
                         <goals>
                             <goal>java</goal>
                         </goals>
@@ -79,6 +90,7 @@
                     </execution>
                     <execution>
                         <id>validate-gate</id>
+                        <phase>verify</phase>
                         <goals>
                             <goal>java</goal>
                         </goals>
@@ -115,7 +127,7 @@
                     <outputDirectory>${project.build.directory}/checkstyle</outputDirectory>
                     <outputFile>${project.build.directory}/checkstyle/checkstyle-result.xml</outputFile>
                     <outputFileFormat>xml</outputFileFormat>
-                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                    <includeTestSourceDirectory>false</includeTestSourceDirectory>
                 </configuration>
                 <executions>
                     <execution>

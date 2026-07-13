@@ -52,4 +52,5 @@ jobs:
           path: |
             reports/
             checkstyle/0/checkstyle.json
+            target/checkstyle/rule-coverage-result.xml
           retention-days: 30
