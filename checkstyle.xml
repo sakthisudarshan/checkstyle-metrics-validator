@@ -5,7 +5,7 @@
 
 <!--
   Maven / automation pipeline Checkstyle configuration.
-  Standard rules only (no custom checks) so maven-checkstyle-plugin can load this file.
+  Full rule set for all 12 classifications. Custom checks require project jar on plugin classpath.
 -->
 <module name="Checker">
     <property name="severity" value="warning"/>
@@ -16,13 +16,38 @@
         <property name="optional" value="true"/>
     </module>
 
+    <module name="FileTabCharacter"/>
     <module name="LineLength">
         <property name="max" value="100"/>
         <property name="ignorePattern" value="^package.*|^import.*"/>
     </module>
+    <module name="RegexpMultiline">
+        <property name="format" value="[ \t]+$"/>
+        <property name="message" value="Line has trailing whitespace."/>
+    </module>
 
     <module name="TreeWalker">
-        <!-- Naming conventions -->
+        <module name="SuppressionCommentFilter"/>
+        <module name="SuppressionXpathFilter">
+            <property name="file" value="${checkstyle.suppressions-xpath.file}"/>
+            <property name="optional" value="true"/>
+        </module>
+        <module name="EmptyLineSeparator"/>
+        <module name="IllegalToken">
+            <property name="tokens" value="LABELED_STAT"/>
+        </module>
+        <module name="IllegalImport">
+            <property name="illegalPkgs" value="sun,com.sun"/>
+            <property name="severity" value="error"/>
+        </module>
+        <module name="AvoidStarImport"/>
+        <module name="OneStatementPerLine"/>
+        <module name="NeedBraces"/>
+        <module name="UnusedLocalVariable"/>
+        <module name="UnusedImports"/>
+        <module name="RedundantModifier"/>
+        <module name="HiddenField"/>
+        <module name="FinalLocalVariable"/>
         <module name="ConstantName"/>
         <module name="LocalVariableName"/>
         <module name="MemberName"/>
@@ -30,47 +55,33 @@
         <module name="PackageName"/>
         <module name="ParameterName"/>
         <module name="TypeName"/>
-
-        <!-- Unused variables -->
-        <module name="UnusedLocalVariable"/>
-
-        <!-- Javadoc -->
-        <module name="MissingJavadocMethod">
-            <property name="minLineCount" value="0"/>
+        <module name="WhitespaceAround"/>
+        <module name="WhitespaceAfter"/>
+        <module name="NoWhitespaceBefore"/>
+        <module name="LeftCurly"/>
+        <module name="RightCurly"/>
+        <module name="SeparatorWrap">
+            <property name="tokens" value="DOT"/>
+            <property name="option" value="nl"/>
         </module>
-        <module name="MissingJavadocType"/>
-
-        <!-- Magic numbers -->
-        <module name="MagicNumber">
-            <property name="ignoreNumbers" value="-1,0,1,2"/>
+        <module name="OperatorWrap">
+            <property name="option" value="nl"/>
         </module>
-
-        <!-- Empty blocks -->
         <module name="EmptyBlock"/>
         <module name="EmptyCatchBlock"/>
-
-        <!-- Import order -->
-        <module name="ImportOrder">
-            <property name="groups" value="/^java\./,javax,org,com"/>
-            <property name="ordered" value="true"/>
-            <property name="separated" value="true"/>
-        </module>
-
-        <!-- Whitespace -->
         <module name="Indentation">
             <property name="basicOffset" value="4"/>
             <property name="braceAdjustment" value="0"/>
             <property name="caseIndent" value="4"/>
         </module>
-        <module name="WhitespaceAround"/>
-        <module name="WhitespaceAfter"/>
-
-        <!-- Modifier order -->
-        <module name="ModifierOrder"/>
-
-        <!-- Complexity -->
         <module name="CyclomaticComplexity">
             <property name="max" value="5"/>
+        </module>
+        <module name="NPathComplexity">
+            <property name="max" value="50"/>
+        </module>
+        <module name="BooleanExpressionComplexity">
+            <property name="max" value="3"/>
         </module>
         <module name="NestedIfDepth">
             <property name="max" value="2"/>
@@ -78,5 +89,25 @@
         <module name="MethodLength">
             <property name="max" value="30"/>
         </module>
+        <module name="ExecutableStatementCount">
+            <property name="max" value="10"/>
+        </module>
+        <module name="ParameterNumber">
+            <property name="max" value="5"/>
+        </module>
+        <module name="MagicNumber">
+            <property name="ignoreNumbers" value="-1,0,1,2"/>
+        </module>
+        <module name="ImportOrder">
+            <property name="groups" value="/^java\./,javax,org,com"/>
+            <property name="ordered" value="true"/>
+            <property name="separated" value="true"/>
+        </module>
+        <module name="ModifierOrder"/>
+        <module name="MissingJavadocMethod">
+            <property name="minLineCount" value="0"/>
+        </module>
+        <module name="MissingJavadocType"/>
+        <module name="com.testable.checkstyle.custom.ForbidSystemOutCheck"/>
     </module>
 </module>

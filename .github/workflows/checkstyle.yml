@@ -1,0 +1,63 @@
+name: Checkstyle CI Gate
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  checkstyle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Build and run Checkstyle scoring audit
+        run: |
+          chmod +x mvnw
+          ./mvnw -B clean verify -Ptestable-pipeline
+
+      - name: Assert Maven XML report exists
+        run: test -f target/checkstyle-result.xml
+
+      - name: Assert HTML report exists
+        run: test -f target/site/checkstyle.html
+
+      - name: Assert rule-coverage report exists
+        run: test -f target/checkstyle/rule-coverage-result.xml
+
+      - name: Assert platform gate is 100/100
+        run: |
+          VIOLATIONS=$(python -c "import json; print(json.load(open('checkstyle/0/checkstyle.json'))['total_violations'])")
+          SCORE=$(python -c "import json; print(json.load(open('checkstyle/0/checkstyle.json'))['overall_score'])")
+          test "$VIOLATIONS" = "0"
+          test "$SCORE" = "100"
+
+      - name: Assert all classifications covered
+        run: |
+          COUNT=$(python -c "import json; d=json.load(open('reports/rule-coverage.json')); print(len(d.get('triggered_classifications', [])))")
+          test "$COUNT" -ge 10
+
+      - name: Upload Checkstyle artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkstyle-reports
+          path: |
+            target/checkstyle-result.xml
+            target/site/checkstyle.html
+            target/checkstyle/rule-coverage-result.xml
+            checkstyle/0/checkstyle.json
+            reports/
+            docs/COVERAGE_MATRIX.md
+          retention-days: 30

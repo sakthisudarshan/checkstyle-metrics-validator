@@ -10,10 +10,10 @@ public final class CleanDemo {
     /**
      * Creates a demo value holder.
      *
-     * @param value stored integer value
+     * @param initialValue stored integer value
      */
-    public CleanDemo(int value) {
-        this.value = value;
+    public CleanDemo(int initialValue) {
+        this.value = initialValue;
     }
 
     /**

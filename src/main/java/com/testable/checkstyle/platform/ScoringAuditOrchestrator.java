@@ -16,7 +16,8 @@ public final class ScoringAuditOrchestrator {
         Path cleanDemo = projectRoot.resolve("src/main/java/com/testable/demo/CleanDemo.java");
         CheckstyleRunner configRunner = new CheckstyleRunner(
                 projectRoot.resolve("config/checkstyle.xml"),
-                projectRoot.resolve("config/suppressions.xml"));
+                projectRoot.resolve("config/suppressions.xml"),
+                projectRoot.resolve("config/suppressions-xpath.xml"));
         return configRunner.auditFiles(List.of(cleanDemo.toFile()));
     }
 

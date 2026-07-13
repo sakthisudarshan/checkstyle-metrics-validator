@@ -3,17 +3,17 @@ package samples;
 /**
  * Clean sample with no intentional violations.
  */
-public class CleanSample {
+public final class CleanSample {
 
-    private int value;
+    private final int value;
 
     /**
      * Creates a clean sample instance.
      *
-     * @param value stored integer value
+     * @param initialValue stored integer value
      */
-    public CleanSample(int value) {
-        this.value = value;
+    public CleanSample(int initialValue) {
+        this.value = initialValue;
     }
 
     /**

@@ -8,13 +8,19 @@
     <suppress checks=".*"
               files="[\\/]com[\\/]testable[\\/]checkstyle[\\/].*\.java"/>
 
-    <!-- Violation demos are exercised via tests/rule-coverage; only CleanDemo is scored -->
+    <!-- Validator corpus is audited in rule-coverage, not the Maven scoring path -->
+    <suppress checks=".*"
+              files="[\\/]com[\\/]testable[\\/]validators[\\/].*\.java"/>
+
+    <!-- Violation demos are exercised via rule-coverage; only CleanDemo is scored -->
     <suppress checks=".*"
               files="[\\/]com[\\/]testable[\\/]demo[\\/](?!CleanDemo)[^\\/]+\.java"/>
 
-    <!-- Test samples are audited in rule-coverage, not the Maven scoring path -->
+    <!-- Test samples and coverage fixtures are not part of the scoring audit -->
     <suppress checks=".*"
               files="[\\/]samples[\\/].*\.java"/>
+    <suppress checks=".*"
+              files="[\\/]coverage[\\/].*\.java"/>
 
     <suppress checks="LineLength"
               files="SuppressedViolationSample\.java"

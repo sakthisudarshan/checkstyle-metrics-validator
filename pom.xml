@@ -73,11 +73,17 @@
                         <artifactId>checkstyle</artifactId>
                         <version>${checkstyle.version}</version>
                     </dependency>
+                    <dependency>
+                        <groupId>${project.groupId}</groupId>
+                        <artifactId>${project.artifactId}</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
                 </dependencies>
                 <configuration>
                     <configLocation>checkstyle.xml</configLocation>
                     <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
                     <propertyExpansion>checkstyle.suppressions.file=${project.basedir}/checkstyle-suppressions.xml</propertyExpansion>
+                    <propertyExpansion>checkstyle.suppressions-xpath.file=${project.basedir}/config/suppressions-xpath.xml</propertyExpansion>
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>false</failsOnError>
                     <failOnViolation>false</failOnViolation>
@@ -85,7 +91,7 @@
                     <violationSeverity>warning</violationSeverity>
                     <logViolationsToConsole>true</logViolationsToConsole>
                     <linkXRef>false</linkXRef>
-                    <outputDirectory>${project.build.directory}</outputDirectory>
+                    <outputDirectory>${project.build.directory}/site</outputDirectory>
                     <outputFile>${project.build.directory}/checkstyle-result.xml</outputFile>
                     <outputFileFormat>xml</outputFileFormat>
                     <includeTestSourceDirectory>false</includeTestSourceDirectory>

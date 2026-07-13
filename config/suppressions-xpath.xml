@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+    "-//SuppressionXpathFilter Experimental//EN"
+    "https://checkstyle.org/dtds/suppressions_1_1_xpath_experimental.dtd">
+
+<suppressions>
+    <suppress-xpath checks="MemberName"
+                    files="FullyAnalyzedSample\.java"
+                    query="//VARIABLE_DEF[./IDENT[@text='BAD_FIELD']]"/>
+</suppressions>

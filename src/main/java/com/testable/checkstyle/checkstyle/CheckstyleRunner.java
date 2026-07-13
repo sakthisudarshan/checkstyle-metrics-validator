@@ -27,10 +27,16 @@ public final class CheckstyleRunner {
 
     private final Path configPath;
     private final Path suppressionsPath;
+    private final Path suppressionsXpathPath;
 
     public CheckstyleRunner(Path configPath, Path suppressionsPath) {
+        this(configPath, suppressionsPath, null);
+    }
+
+    public CheckstyleRunner(Path configPath, Path suppressionsPath, Path suppressionsXpathPath) {
         this.configPath = configPath;
         this.suppressionsPath = suppressionsPath;
+        this.suppressionsXpathPath = suppressionsXpathPath;
     }
 
     public AuditSummary auditDirectory(Path sourceDirectory) throws CheckstyleException, IOException {
@@ -54,6 +60,9 @@ public final class CheckstyleRunner {
         Properties properties = new Properties();
         if (suppressionsPath != null && Files.exists(suppressionsPath)) {
             properties.setProperty("checkstyle.suppressions.file", suppressionsPath.toString());
+        }
+        if (suppressionsXpathPath != null && Files.exists(suppressionsXpathPath)) {
+            properties.setProperty("checkstyle.suppressions-xpath.file", suppressionsXpathPath.toString());
         }
 
         Configuration configuration = ConfigurationLoader.loadConfiguration(

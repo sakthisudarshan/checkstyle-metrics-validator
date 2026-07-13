@@ -27,7 +27,7 @@ final class TestSupport {
     }
 
     static CheckstyleRunner runner() {
-        return new CheckstyleRunner(CONFIG, SUPPRESSIONS);
+        return new CheckstyleRunner(CONFIG, SUPPRESSIONS, PROJECT_ROOT.resolve("config/suppressions-xpath.xml"));
     }
 
     static Path samplesDir() {
