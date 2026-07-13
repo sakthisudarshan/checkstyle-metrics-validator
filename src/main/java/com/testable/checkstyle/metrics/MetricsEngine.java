@@ -41,7 +41,9 @@ public final class MetricsEngine {
     public MetricResult violationDensity(AuditSummary summary) {
         double kloc = Math.max(summary.getLinesOfCode() / 1000.0, 0.001);
         double density = summary.getTotalViolations() / kloc;
-        double normalized = Math.max(0, 100 - (summary.getErrorCount() * 5.0 + summary.getWarningCount()));
+        double normalized = summary.getTotalViolations() == 0
+                ? 100.0
+                : Math.max(0, 100 - (summary.getErrorCount() * 5.0 + summary.getWarningCount()));
         boolean passed = summary.getErrorCount() == 0 && density < 10;
         return new MetricResult(TECHNIQUE, "Rule Detection Test", "Violation Density per KLOC",
                 density, normalized, "violations/KLOC", passed,
@@ -73,11 +75,13 @@ public final class MetricsEngine {
     public MetricResult namingConventionValidation(AuditSummary summary) {
         List<ViolationRecord> naming = summary.violationsMatching(v ->
                 v.sourceContains("Name") || v.messageContains("name"));
-        double semanticConsistency = 1.0 / (1.0 + naming.size());
+        double semanticConsistency = naming.isEmpty() ? 1.0 : 1.0 / (1.0 + naming.size());
         double conventionRate = summary.getTotalViolations() == 0
                 ? 0
                 : (naming.size() * 100.0) / summary.getTotalViolations();
-        double normalized = Math.max(0, 100 - (conventionRate * 0.25));
+        double normalized = summary.getTotalViolations() == 0
+                ? 100.0
+                : Math.max(0, 100 - (conventionRate * 0.25));
         boolean passed = conventionRate < 2.0;
         return new MetricResult(TECHNIQUE, "Naming Convention Validation", "Semantic Consistency Score",
                 semanticConsistency, normalized, "ratio", passed,
@@ -95,10 +99,12 @@ public final class MetricsEngine {
                         || v.sourceContains("LineLength")
                         || v.messageContains("indent")
                         || v.messageContains("whitespace"));
-        double uniformity = 1.0 / (1.0 + style.size());
+        double uniformity = style.isEmpty() ? 1.0 : 1.0 / (1.0 + style.size());
         double kloc = Math.max(summary.getLinesOfCode() / 1000.0, 0.001);
         double styleDensity = style.size() / kloc;
-        double normalized = Math.max(0, 100 - (styleDensity * 10));
+        double normalized = summary.getTotalViolations() == 0
+                ? 100.0
+                : Math.max(0, 100 - (styleDensity * 10));
         boolean passed = styleDensity < 5;
         return new MetricResult(TECHNIQUE, "Code Style Rule Validation", "Syntactic Uniformity Score",
                 uniformity, normalized, "ratio", passed,
@@ -117,7 +123,7 @@ public final class MetricsEngine {
                         || v.messageContains("complexity")
                         || v.messageContains("nested"));
         double breachCount = complexity.size();
-        double normalized = Math.max(0, 100 - (breachCount * 10));
+        double normalized = complexity.isEmpty() ? 100.0 : Math.max(0, 100 - (breachCount * 10));
         boolean passed = breachCount == 0;
         return new MetricResult(TECHNIQUE, "Complexity Rule Detection", "Structural Threshold Monitoring",
                 breachCount, normalized, "count", passed,
@@ -133,7 +139,9 @@ public final class MetricsEngine {
         double severityScore = summary.getErrorCount() * 10.0
                 + summary.getWarningCount() * 2.0
                 + summary.getInfoCount() * 0.5;
-        double normalized = Math.max(0, 100 - severityScore);
+        double normalized = summary.getTotalViolations() == 0
+                ? 100.0
+                : Math.max(0, 100 - severityScore);
         boolean passed = summary.getErrorCount() == 0;
         return new MetricResult(TECHNIQUE, "Rule Severity Classification", "Impact Prioritization",
                 impactPriority, normalized, "weighted", passed,
@@ -153,7 +161,9 @@ public final class MetricsEngine {
                 .filter(count -> count >= 5 && count <= 10).count();
         double hotfileScore = hotFiles * 15 + amberFiles * 5;
         double aggregatedRisk = summary.getTotalViolations();
-        double normalized = Math.max(0, 100 - hotfileScore);
+        double normalized = summary.getTotalViolations() == 0
+                ? 100.0
+                : Math.max(0, 100 - hotfileScore);
         boolean passed = hotFiles == 0;
         return new MetricResult(TECHNIQUE, "Multiple Violations Detection", "Aggregated Risk Assessment",
                 aggregatedRisk, normalized, "count", passed,
@@ -169,7 +179,9 @@ public final class MetricsEngine {
         double falsePositiveRate = summary.getTotalViolations() == 0
                 ? 0
                 : (suppressedCount * 100.0) / (summary.getTotalViolations() + suppressedCount);
-        double normalized = Math.max(0, 100 - (falsePositiveRate * 5));
+        double normalized = summary.getTotalViolations() == 0
+                ? 100.0
+                : Math.max(0, 100 - (falsePositiveRate * 5));
         boolean passed = falsePositiveRate < 10.0;
         return new MetricResult(TECHNIQUE, "False Positive Prevention", "Accuracy Tuning",
                 accuracyProxy, normalized, "ratio", passed,
@@ -189,8 +201,7 @@ public final class MetricsEngine {
         List<ViolationRecord> custom = summary.violationsMatching(v ->
                 v.sourceContains("ForbidSystemOutCheck")
                         || v.messageContains("Project-specific"));
-        double passRate = custom.isEmpty() ? 100.0 : 0.0;
-        double normalized = passRate;
+        double normalized = custom.isEmpty() ? 100.0 : 0.0;
         boolean passed = custom.isEmpty();
         return new MetricResult(TECHNIQUE, "Custom Rule Validation", "Project-Specific Enforcement",
                 custom.size(), normalized, "count", passed,
@@ -211,8 +222,8 @@ public final class MetricsEngine {
         double uniformity = 1.0 / (1.0 + Math.abs(firstRun.getTotalViolations()
                 - secondRun.getTotalViolations()));
         double configDrift = (sameViolationCount && sameRules) ? 0 : 1;
-        double normalized = Math.max(0, 100 - (configDrift * 25));
         boolean passed = sameViolationCount && sameRules;
+        double normalized = passed ? 100.0 : Math.max(0, 100 - (configDrift * 25));
         return new MetricResult(TECHNIQUE, "Configuration File Handling", "Environment Standardization",
                 uniformity, normalized, "ratio", passed,
                 "consistentRuns=" + passed + ", driftScore=" + configDrift);

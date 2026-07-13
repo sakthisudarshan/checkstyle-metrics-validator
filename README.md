@@ -44,6 +44,25 @@ checkstyle/
 - Java 17+
 - Maven 3.8+
 
+## Platform Integration (TESTABLE Tool List)
+
+The TESTABLE platform discovers tools via the gate file at:
+
+```
+checkstyle/0/checkstyle.json
+```
+
+This file must exist with `"tool": "checkstyle"` for Checkstyle to appear in the tool list and trigger execution.
+
+### Export platform gate
+
+```bash
+.\mvnw.cmd exec:java@export-platform
+.\mvnw.cmd exec:java@validate-gate
+```
+
+S3 upload path: `s3://<bucket>/checkstyle/0/checkstyle.json`
+
 ## Quick Start
 
 ```bash

@@ -1,0 +1,47 @@
+name: Checkstyle Lint Validation
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Run metric validation tests
+        run: |
+          chmod +x mvnw
+          ./mvnw -B test
+
+      - name: Export platform gate JSON
+        run: ./mvnw -B exec:java@export-platform
+
+      - name: Validate 100/100 gate
+        run: ./mvnw -B exec:java@validate-gate
+
+      - name: Verify platform JSON exists
+        run: test -f checkstyle/0/checkstyle.json
+
+      - name: Upload metrics artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkstyle-metrics-report
+          path: |
+            reports/
+            checkstyle/0/checkstyle.json
+          retention-days: 30
